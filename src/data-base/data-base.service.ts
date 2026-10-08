@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '../../src/generated/prisma/client.js';
+import { PrismaClient } from '../generated/prisma/client.js';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { ConfigService } from '@nestjs/config';
-import { Prisma } from '../../src/generated/prisma/browser.js';
+import { Prisma } from '../generated/prisma/browser.js';
 
 type ModelName = Uncapitalize<Prisma.ModelName> & keyof PrismaClient;
 
@@ -30,7 +30,7 @@ export class DataBaseService extends PrismaClient {
   }
 
   private model(name: ModelName): ModelDelegate {
-    return (this as PrismaClient)[name] as ModelDelegate;
+    return this[name] as unknown as ModelDelegate;
   }
 
   async create(
