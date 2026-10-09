@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 import { AppModule } from './app.module.js';
-import { SuccessResponseInterceptor } from './common/interceptor/success-response.interceptor.js';
+import { SuccessResponseInterceptor } from './common/interceptors/success-response.interceptor.js';
 import { apiReference } from '@scalar/nestjs-api-reference';
 
 async function bootstrap() {
@@ -52,7 +52,6 @@ async function bootstrap() {
       'Content-Type',
       'X-Requested-With',
       'Access-Control-Allow-Origin',
-      'x-auth-token',
       'x-auth-refresh-token',
     ],
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],

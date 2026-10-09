@@ -1,0 +1,165 @@
+<%#
+  magic-link.ejs: self-contained sign-in email.
+  Required: appName, userName, magicLinkUrl, expiresInMinutes, requestedAt, year
+  Optional: device, location, supportEmail
+%>
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
+  <title>Sign in to <%= appName %></title>
+  <style>
+    /* Only for clients that support <style>; everything critical is inline */
+    @media (max-width: 600px) {
+      .container { width: 100% !important; }
+      .px { padding-left: 20px !important; padding-right: 20px !important; }
+      .amount { font-size: 30px !important; }
+    }
+    a { color: #F5A524; }
+  </style>
+</head>
+<body style="margin:0;padding:0;background-color:#0B0B0C;-webkit-text-size-adjust:100%;">
+
+  <!-- Preheader: the preview text inboxes show next to the subject -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#0B0B0C;">
+    Your one-tap sign-in link for <%= appName %>. It expires in <%= expiresInMinutes %> minutes.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0B0B0C" style="background-color:#0B0B0C;">
+    <tr>
+      <td align="center" style="padding:40px 12px;">
+
+        <table role="presentation" class="container" width="560" cellpadding="0" cellspacing="0" border="0" style="width:560px;max-width:560px;">
+
+          <!-- Brand row -->
+          <tr>
+            <td class="px" style="padding:0 8px 20px 8px;font-family:Inter,'Segoe UI',Helvetica,Arial,sans-serif;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="font-size:20px;font-weight:700;color:#FFFFFF;letter-spacing:-0.2px;">
+                    <span style="display:inline-block;width:28px;height:28px;line-height:28px;border-radius:8px;background-color:#F5A524;color:#0B0B0C;text-align:center;font-size:15px;font-weight:800;vertical-align:middle;margin-right:8px;"><%= appName.charAt(0) %></span><span style="vertical-align:middle;"><%= appName %></span>
+                  </td>
+                  <td align="right" style="font-size:12px;color:#8B8B92;">
+                    <span style="display:inline-block;padding:4px 10px;border-radius:999px;background-color:#13261A;color:#22C55E;font-weight:600;">&#9679; Secure sign-in</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Main card -->
+          <tr>
+            <td bgcolor="#161618" style="background-color:#161618;border:1px solid #2A2A2E;border-radius:20px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+
+                <tr>
+                  <td class="px" style="padding:32px 32px 0 32px;font-family:Inter,'Segoe UI',Helvetica,Arial,sans-serif;">
+                    <p style="margin:0 0 10px 0;font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:#8B8B92;font-weight:600;">
+                      Magic link &middot; expires in <%= expiresInMinutes %> min
+                    </p>
+                    <h1 class="amount" style="margin:0 0 12px 0;font-size:34px;line-height:1.15;font-weight:700;color:#FFFFFF;letter-spacing:-0.6px;">
+                      Hi <%= userName %>, tap to sign in.
+                    </h1>
+                    <p style="margin:0 0 28px 0;font-size:15px;line-height:1.6;color:#8B8B92;">
+                      No password needed. Use the button below to open <%= appName %> on this device. The link works once.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- CTA: bulletproof pill button -->
+                <tr>
+                  <td class="px" style="padding:0 32px 28px 32px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td align="center" bgcolor="#F5A524" style="background-color:#F5A524;border-radius:999px;">
+                          <a href="<%= magicLinkUrl %>" target="_blank"
+                             style="display:block;padding:16px 24px;font-family:Inter,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;color:#0B0B0C;text-decoration:none;border-radius:999px;">
+                            Sign in to <%= appName %> &rarr;
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Request details (styled like the app's Account / Date / Note rows) -->
+                <tr>
+                  <td class="px" style="padding:0 32px 24px 32px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#1E1E21" style="background-color:#1E1E21;border:1px solid #2A2A2E;border-radius:14px;font-family:Inter,'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;">
+                      <tr>
+                        <td style="padding:14px 18px;color:#FFFFFF;border-bottom:1px solid #2A2A2E;">Requested</td>
+                        <td align="right" style="padding:14px 18px;color:#8B8B92;border-bottom:1px solid #2A2A2E;"><%= requestedAt %></td>
+                      </tr>
+                      <% if (locals.device) { %>
+                      <tr>
+                        <td style="padding:14px 18px;color:#FFFFFF;border-bottom:1px solid #2A2A2E;">Device</td>
+                        <td align="right" style="padding:14px 18px;color:#8B8B92;border-bottom:1px solid #2A2A2E;"><%= device %></td>
+                      </tr>
+                      <% } %>
+                      <% if (locals.location) { %>
+                      <tr>
+                        <td style="padding:14px 18px;color:#FFFFFF;border-bottom:1px solid #2A2A2E;">Location</td>
+                        <td align="right" style="padding:14px 18px;color:#8B8B92;border-bottom:1px solid #2A2A2E;"><%= location %></td>
+                      </tr>
+                      <% } %>
+                      <tr>
+                        <td style="padding:14px 18px;color:#FFFFFF;">Expires</td>
+                        <td align="right" style="padding:14px 18px;color:#F5A524;font-weight:600;">In <%= expiresInMinutes %> minutes</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Insight-style tip card -->
+                <tr>
+                  <td class="px" style="padding:0 32px 28px 32px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#1E1E21" style="background-color:#1E1E21;border-radius:14px;font-family:Inter,'Segoe UI',Helvetica,Arial,sans-serif;">
+                      <tr>
+                        <td valign="top" width="28" style="padding:16px 0 16px 18px;color:#F5A524;font-size:16px;">&#10022;</td>
+                        <td style="padding:16px 18px 16px 8px;">
+                          <p style="margin:0 0 4px 0;font-size:14px;font-weight:600;color:#FFFFFF;">Didn't request this?</p>
+                          <p style="margin:0;font-size:13px;line-height:1.55;color:#8B8B92;">
+                            You can ignore this email. Nobody can sign in without this link, and it expires on its own.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Fallback URL -->
+                <tr>
+                  <td class="px" style="padding:0 32px 32px 32px;border-top:1px solid #2A2A2E;font-family:Inter,'Segoe UI',Helvetica,Arial,sans-serif;">
+                    <p style="margin:24px 0 8px 0;font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:#8B8B92;font-weight:600;">
+                      Button not working?
+                    </p>
+                    <p style="margin:0;font-size:13px;line-height:1.5;color:#8B8B92;word-break:break-all;">
+                      Paste this link into your browser:<br>
+                      <a href="<%= magicLinkUrl %>" style="color:#F5A524;text-decoration:underline;"><%= magicLinkUrl %></a>
+                    </p>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td class="px" align="center" style="padding:24px 8px 0 8px;font-family:Inter,'Segoe UI',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.6;color:#5C5C63;">
+              <% if (locals.supportEmail) { %>
+                Questions? <a href="mailto:<%= supportEmail %>" style="color:#8B8B92;text-decoration:underline;"><%= supportEmail %></a><br>
+              <% } %>
+              &copy; <%= year %> <%= appName %>. You're getting this because someone asked to sign in with this address.
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

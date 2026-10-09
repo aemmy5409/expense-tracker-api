@@ -13,8 +13,24 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  email      String   @unique
-  name       String
-  created_at DateTime @default(now())
+  id                String    @id @default(uuid())
+  email             String    @unique
+  name              String
+  email_verified_at DateTime? // set on first magic-link use
+  created_at        DateTime  @default(now())
+
+  magic_link_tokens MagicLinkToken[]
+}
+
+// Only the SHA-256 of the token is stored; the raw token lives in the email.
+model MagicLinkToken {
+  id           String    @id @default(uuid())
+  user_id      String
+  user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  token_hash   String    @unique @db.Char(64)
+  expires_at   DateTime
+  consumed_at  DateTime? // used, or superseded by a newer link
+  requested_ip String?   @db.Inet
+  user_agent   String?   @db.VarChar(255)
+  created_at   DateTime  @default(now())
 }
