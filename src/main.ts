@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 import { AppModule } from './app.module.js';
-import { SuccessResponseInterceptor } from './common/interceptor/success-response.interceptor.js';
+import { SuccessResponseInterceptor } from './common/interceptors/success-response.interceptor.js';
 import { apiReference } from '@scalar/nestjs-api-reference';
 
 async function bootstrap() {

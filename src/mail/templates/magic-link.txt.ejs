@@ -1,0 +1,12 @@
+Hi <%- userName %>,
+
+Sign in to <%- appName %> with this link (expires in <%- expiresInMinutes %> minutes, single use):
+<%- magicLinkUrl %>
+
+Requested: <%- requestedAt %><% if (locals.device) { %>
+Device: <%- device %><% } %><% if (locals.location) { %>
+Location: <%- location %><% } %>
+
+Didn't request this? Ignore this email. Nobody can sign in without the link.
+
+© <%- year %> <%- appName %>
