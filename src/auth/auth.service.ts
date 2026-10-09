@@ -160,7 +160,6 @@ export class AuthService {
       statusCode: 200,
       data: {
         accessToken,
-        user: { id: user.id, name: user.name, email: user.email },
       },
     };
   }
