@@ -52,7 +52,6 @@ async function bootstrap() {
       'Content-Type',
       'X-Requested-With',
       'Access-Control-Allow-Origin',
-      'x-auth-token',
       'x-auth-refresh-token',
     ],
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
