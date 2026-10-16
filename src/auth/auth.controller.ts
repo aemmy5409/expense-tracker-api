@@ -40,6 +40,12 @@ export class AuthController {
     return this.authService.verifyMagicLink(token);
   }
 
+  @Post('me')
+  @UseGuards(AuthGuard)
+  me(@CurrentUser() user: TokenPayload['user']) {
+    return this.authService.me(user.id);
+  }
+
   @Delete('anonymize')
   @UseGuards(AuthGuard)
   remove(@CurrentUser() user: TokenPayload['user']) {
