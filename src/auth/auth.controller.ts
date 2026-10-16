@@ -8,6 +8,7 @@ import {
   Ip,
   UseGuards,
   Param,
+  Get,
 } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { SignUpDto } from './dto/sign-up.dto.js';
@@ -19,6 +20,12 @@ import { CurrentUser } from '../common/decorators/current-user.decorator.js';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('me')
+  @UseGuards(AuthGuard)
+  me(@CurrentUser() user: TokenPayload['user']) {
+    return this.authService.me(user.id);
+  }
 
   @Post('sign-up')
   create(@Body() signUpDto: SignUpDto) {

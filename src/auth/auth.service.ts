@@ -164,6 +164,22 @@ export class AuthService {
     };
   }
 
+  async me(id: string) {
+    const user = await this.dataBaseService.findUnique(
+      'user',
+      { id },
+      { select: { id: true, email: true, name: true } },
+    );
+    if (!user) {
+      throw new BadRequestException('user not found');
+    }
+    return {
+      message: 'user fetched successfully',
+      statusCode: 200,
+      data: user,
+    };
+  }
+
   async anonymize(id: string) {
     await this.dataBaseService.update(
       'user',
