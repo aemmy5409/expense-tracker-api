@@ -10,7 +10,6 @@ import {
   Param,
   Get,
   Req,
-  Cookies,
 } from '@nestjs/common';
 import { AuthService } from './auth.service.js';
 import { SignUpDto } from './dto/sign-up.dto.js';
@@ -32,7 +31,8 @@ export class AuthController {
     return this.authService.me(user.id);
   }
 
-  @Get('refresh')
+  @Post('refresh')
+  @HttpCode(200)
   @ApiBearerAuth('x-auth-refresh-token')
   refresh(@Headers('x-auth-refresh-token') token: string) {
     return this.authService.refreshToken(token);

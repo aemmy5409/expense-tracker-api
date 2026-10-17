@@ -40,7 +40,9 @@ export class AuthService {
       email,
     });
     if (existingUser) {
-      throw new BadRequestException('user exists, try to sign in.');
+      throw new BadRequestException(
+        'unable to create account with the provided details',
+      );
     }
 
     const user = await this.dataBaseService.create('user', { email, name });
@@ -167,20 +169,27 @@ export class AuthService {
     if (!token)
       throw new UnauthorizedException('invalid or expired refresh token');
 
-    const userSession = (await this.dataBaseService.findUnique('session', {
-      refresh_token_hash: hashToken(token),
-      expires_at: { gt: new Date() },
-    })) as Session;
+    const tokenHash = hashToken(token);
+    const now = new Date();
 
-    if (!userSession) {
+    // The conditional update is the only revoke path: if two requests race
+    // with the same refresh token, only one of them gets count === 1.
+    const { count } = (await this.dataBaseService.updateMany(
+      'session',
+      {
+        refresh_token_hash: tokenHash,
+        revoked: false,
+        expires_at: { gt: now },
+      },
+      { revoked: true, expires_at: now },
+    )) as { count: number };
+    if (count !== 1) {
       throw new UnauthorizedException('invalid or expired refresh token');
     }
 
-    await this.dataBaseService.update(
-      'session',
-      { id: userSession.id },
-      { revoked: true, expires_at: new Date() },
-    );
+    const userSession = (await this.dataBaseService.findUnique('session', {
+      refresh_token_hash: tokenHash,
+    })) as Session;
 
     const user = (await this.dataBaseService.findUnique(
       'user',
@@ -192,7 +201,7 @@ export class AuthService {
       throw new UnauthorizedException('user not found');
     }
 
-    const { accessToken, refreshToken } =
+    const { accessToken, refreshToken, accessTokenExpiresAt } =
       await this.tokenUtils.generateAuthTokens(user);
 
     return {
@@ -201,6 +210,7 @@ export class AuthService {
       data: {
         accessToken,
         refreshToken,
+        accessTokenExpiresAt,
       },
     };
   }
