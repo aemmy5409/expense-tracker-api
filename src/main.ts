@@ -20,6 +20,15 @@ async function bootstrap() {
     .setDescription('API for Expense Tracker via Scalar')
     .setVersion('1.0')
     .addBearerAuth()
+    .addApiKey(
+      {
+        type: 'apiKey',
+        in: 'header',
+        name: 'x-auth-refresh-token',
+        description: 'Enter your JWT refresh token',
+      },
+      'x-auth-refresh-token',
+    )
     .build();
 
   // 2. Generate the OpenAPI spec document object

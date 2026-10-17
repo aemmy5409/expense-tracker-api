@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -8,23 +9,20 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { TokenPayload } from '../../common/utils/token-payload.interface.js';
-// import { RedisService } from 'src/redis/redis.service';
-
-// lastUsedAt is for auditing, not billing — minute-level accuracy is plenty
-// and saves a write on every request.
-const LAST_USED_WRITE_INTERVAL_MS = 5 * 60 * 1000;
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private configService: ConfigService,
-    // private readonly redisService: RedisService,
+    @Inject(CACHE_MANAGER)
+    private readonly cache: Cache,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
-    const accessToken = this.extractTokenFromHeader(request);
+    const accessToken = extractTokenFromHeader(request);
 
     if (!accessToken) {
       throw new UnauthorizedException('No access token was provided');
@@ -39,12 +37,10 @@ export class AuthGuard implements CanActivate {
         },
       );
 
-      //   const isBlacklisted = await this.redisService.get(
-      //     `blacklist:${payload.jti}`,
-      //   );
-      //   if (isBlacklisted) {
-      //     throw new UnauthorizedException('Token revoked, please login again');
-      //   }
+      const isBlacklisted = await this.cache.get(`blacklist:${payload.jti}`);
+      if (isBlacklisted) {
+        throw new UnauthorizedException('Token revoked, please login again');
+      }
 
       request['user'] = payload['user'];
       request['accessToken'] = accessToken;
@@ -57,9 +53,9 @@ export class AuthGuard implements CanActivate {
 
     return true;
   }
+}
 
-  private extractTokenFromHeader(request: Request) {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
-  }
+function extractTokenFromHeader(request: Request) {
+  const [type, token] = request.headers.authorization?.split(' ') ?? [];
+  return type === 'Bearer' ? token : undefined;
 }
