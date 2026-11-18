@@ -1,12 +1,14 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
   ParseBoolPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -22,7 +24,10 @@ export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 
   @Get()
-  list(@Param('includeArchived', ParseBoolPipe) includeArchived: boolean) {
+  list(
+    @Query('includeArchived', new DefaultValuePipe(false), ParseBoolPipe)
+    includeArchived: boolean,
+  ) {
     return this.accountsService.list(includeArchived);
   }
 
