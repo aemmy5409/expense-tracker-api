@@ -6,13 +6,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SignUpDto } from './dto/sign-up.dto.js';
-import { SignInDto } from './dto/sign-in.dto.js';
-import { DataBaseService } from '../data-base/data-base.service.js';
-import { MailService } from '../mail/mail.service.js';
-import type { User, Session } from '../generated/prisma/client.js';
+import { SignUpDto } from './dto/sign-up.dto';
+import { SignInDto } from './dto/sign-in.dto';
+import { DataBaseService } from '../data-base/data-base.service';
+import { MailService } from '../mail/mail.service';
+import type { User, Session } from '../generated/prisma/client';
 import crypto from 'crypto';
-import { TokenUtils, hashToken } from '../common/utils/auth-token-generator.js';
+import { TokenUtils, hashToken } from '../common/utils/auth-token-generator';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Request } from 'express';
 
@@ -72,6 +72,7 @@ export class AuthService {
       this.configService.get<string>('MAGIC_LINK_TTL_MIN') ?? 15,
     );
     const token = crypto.randomBytes(32).toString('base64url');
+    // console.log(token);
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
 
     // A new link supersedes any older unused ones.

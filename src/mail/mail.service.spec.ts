@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { MailService } from './mail.service.js';
+import { MailService } from './mail.service';
 
 describe('MailService', () => {
   let service: MailService;

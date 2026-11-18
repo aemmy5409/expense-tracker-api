@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import ejs from 'ejs';
-import type { MailTemplateName, MailTemplates } from './mail-templates.js';
+import type { MailTemplateName, MailTemplates } from './mail-templates';
 
 export interface SendMailOptions {
   to: string;
@@ -12,7 +12,7 @@ export interface SendMailOptions {
   text?: string;
 }
 
-const TEMPLATES_DIR = join(import.meta.dirname, 'templates');
+const TEMPLATES_DIR = join(__dirname, 'templates');
 
 @Injectable()
 export class MailService {

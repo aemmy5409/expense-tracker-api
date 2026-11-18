@@ -8,8 +8,9 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
-import { TokenPayload } from '../../common/utils/token-payload.interface.js';
+import { TokenPayload } from '../../common/utils/token-payload.interface';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { requestContext } from '../../common/context/request-context';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -43,6 +44,8 @@ export class AuthGuard implements CanActivate {
       }
 
       request['user'] = payload['user'];
+      const store = requestContext.getStore();
+      if (store) store.userId = payload.user.id;
       request['accessToken'] = accessToken;
     } catch (err) {
       console.error(`Error validating access token: ${err}`);

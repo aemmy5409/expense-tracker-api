@@ -2,9 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import crypto from 'crypto';
 import { JwtService } from '@nestjs/jwt';
-import { AuthService } from './auth.service.js';
-import { DataBaseService } from '../data-base/data-base.service.js';
-import { MailService } from '../mail/mail.service.js';
+import { AuthService } from './auth.service';
+import { DataBaseService } from '../data-base/data-base.service';
+import { MailService } from '../mail/mail.service';
 
 describe('AuthService', () => {
   let service: AuthService;

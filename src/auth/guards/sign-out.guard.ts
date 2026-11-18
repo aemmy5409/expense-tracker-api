@@ -1,5 +1,5 @@
 import { Injectable, ExecutionContext } from '@nestjs/common';
-import { AuthGuard } from './auth.guard.js';
+import { AuthGuard } from './auth.guard';
 
 @Injectable()
 export class SignOutGuard extends AuthGuard {

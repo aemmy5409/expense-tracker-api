@@ -3,8 +3,9 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-import { AppModule } from './app.module.js';
-import { SuccessResponseInterceptor } from './common/interceptors/success-response.interceptor.js';
+import { AppModule } from './app.module';
+import { SuccessResponseInterceptor } from './common/interceptors/success-response.interceptor';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { apiReference } from '@scalar/nestjs-api-reference';
 
 async function bootstrap() {
@@ -45,7 +46,14 @@ async function bootstrap() {
   );
 
   app.useGlobalInterceptors(new SuccessResponseInterceptor());
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   const origins: string[] = ['http://localhost:5713'];
   if (process.env.FRONTEND_URL) {
@@ -63,7 +71,7 @@ async function bootstrap() {
       'Access-Control-Allow-Origin',
       'x-auth-refresh-token',
     ],
-    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
   });
 
   const port = process.env.PORT ?? 3000;

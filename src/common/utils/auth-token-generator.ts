@@ -4,9 +4,9 @@ import { ConfigService } from '@nestjs/config';
 import { createHash, randomUUID, randomBytes } from 'crypto';
 import { Request } from 'express';
 
-import { UserPayload } from './user-payload.interface.js';
-import { DataBaseService } from '../../data-base/data-base.service.js';
-import { TokenPayload } from './token-payload.interface.js';
+import { UserPayload } from './user-payload.interface';
+import { DataBaseService } from '../../data-base/data-base.service';
+import { TokenPayload } from './token-payload.interface';
 
 const REFRESH_TOKEN_TTL = 7 * 24 * 60 * 60 * 1000;
 
