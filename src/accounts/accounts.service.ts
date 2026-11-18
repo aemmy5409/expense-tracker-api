@@ -20,13 +20,12 @@ export class AccountsService {
   };
   constructor(private readonly databaseService: DataBaseService) {}
 
-  async list() {
+  async list(includeArchived: boolean) {
     // user_id is added by the scoped client (see data-base/user-scope.ts).
-    const accounts = (await this.databaseService.findMany(
-      'account',
-      { is_archived: false },
-      { omit: this.OMIT_DATA },
-    )) as Account[];
+    let include = includeArchived ? {} : { is_archived: false };
+    const accounts = (await this.databaseService.findMany('account', include, {
+      omit: this.OMIT_DATA,
+    })) as Account[];
     return {
       message: 'accounts fetched',
       data: accounts,

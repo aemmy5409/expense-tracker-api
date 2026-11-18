@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseBoolPipe,
   Patch,
   Post,
   UseGuards,
@@ -21,8 +22,8 @@ export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 
   @Get()
-  list() {
-    return this.accountsService.list();
+  list(@Param('includeArchived', ParseBoolPipe) includeArchived: boolean) {
+    return this.accountsService.list(includeArchived);
   }
 
   @Post()
