@@ -11,15 +11,15 @@ import {
   Get,
   Req,
 } from '@nestjs/common';
-import { AuthService } from './auth.service.js';
-import { SignUpDto } from './dto/sign-up.dto.js';
-import { SignInDto } from './dto/sign-in.dto.js';
-import { AuthGuard } from './guards/auth.guard.js';
-import type { TokenPayload } from '../common/utils/token-payload.interface.js';
-import { CurrentUser } from '../common/decorators/current-user.decorator.js';
+import { AuthService } from './auth.service';
+import { SignUpDto } from './dto/sign-up.dto';
+import { SignInDto } from './dto/sign-in.dto';
+import { AuthGuard } from './guards/auth.guard';
+import type { TokenPayload } from '../common/utils/token-payload.interface';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 import type { Request } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { SignOutGuard } from './guards/sign-out.guard.js';
+import { SignOutGuard } from './guards/sign-out.guard';
 
 @Controller('auth')
 export class AuthController {

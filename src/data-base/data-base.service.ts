@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '../generated/prisma/client.js';
+import { PrismaClient } from '../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { ConfigService } from '@nestjs/config';
-import { Prisma } from '../generated/prisma/browser.js';
+import { Prisma } from '../generated/prisma/browser';
+import { currentUserId } from '../common/context/request-context';
+import { scopeArgs } from './user-scope';
 
 type ModelName = Uncapitalize<Prisma.ModelName> & keyof PrismaClient;
 
@@ -22,15 +24,36 @@ type ModelDelegate = {
 
 @Injectable()
 export class DataBaseService extends PrismaClient {
+  // All helper methods go through this client, which adds user_id to queries
+  // on user-owned models (see user-scope.ts).
+  private readonly scoped;
+
   constructor(private readonly config: ConfigService) {
     const adapter = new PrismaPg({
       connectionString: config.getOrThrow<string>('DATABASE_URL'),
     });
     super({ adapter });
+
+    this.scoped = this.$extends({
+      query: {
+        $allModels: {
+          $allOperations({ model, operation, args, query }) {
+            return query(
+              scopeArgs(
+                model,
+                operation,
+                args as Record<string, unknown>,
+                currentUserId(),
+              ) as typeof args,
+            );
+          },
+        },
+      },
+    });
   }
 
   private model(name: ModelName): ModelDelegate {
-    return this[name] as unknown as ModelDelegate;
+    return this.scoped[name] as unknown as ModelDelegate;
   }
 
   async create(

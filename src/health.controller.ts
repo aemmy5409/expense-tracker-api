@@ -4,7 +4,7 @@ import {
   HttpStatus,
   ServiceUnavailableException,
 } from '@nestjs/common';
-import { DataBaseService } from './data-base/data-base.service.js';
+import { DataBaseService } from './data-base/data-base.service';
 
 @Controller('health')
 export class HealthController {

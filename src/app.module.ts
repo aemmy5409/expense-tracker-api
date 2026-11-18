@@ -1,10 +1,12 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { DataBaseModule } from './data-base/data-base.module.js';
-import { AuthModule } from './auth/auth.module.js';
-import { MailModule } from './mail/mail.module.js';
-import { DataBaseService } from './data-base/data-base.service.js';
-import { HealthController } from './health.controller.js';
+import { DataBaseModule } from './data-base/data-base.module';
+import { AuthModule } from './auth/auth.module';
+import { MailModule } from './mail/mail.module';
+import { DataBaseService } from './data-base/data-base.service';
+import { HealthController } from './health.controller';
+import { AccountsModule } from './accounts/accounts.module';
+import { RequestContextMiddleware } from './common/context/request-context.middleware';
 
 @Module({
   imports: [
@@ -12,9 +14,14 @@ import { HealthController } from './health.controller.js';
     DataBaseModule,
     AuthModule,
     MailModule,
+    AccountsModule,
   ],
   controllers: [HealthController],
   providers: [DataBaseService],
   exports: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestContextMiddleware).forRoutes('*');
+  }
+}
